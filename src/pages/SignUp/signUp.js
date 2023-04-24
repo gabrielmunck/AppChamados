@@ -10,6 +10,15 @@ export default function SignUp(){
     const [password, setPassword] = useState('');
 
 
+    function handleSubmit(e){
+        e.preventDefault()
+        if(name !== '' && email !== '' && password !== ''){
+            alert('fazer cadastro')
+        }
+        else{ alert ('algo deu errado')}
+    }
+
+
     return (
         <div className='container-center'>
             <div className='login'>
@@ -19,7 +28,7 @@ export default function SignUp(){
 
 
 
-                <form>
+                <form onSubmit={handleSubmit}>
                     <h1>Nova Conta</h1>
 
                     <input type='text'
