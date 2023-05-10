@@ -21,14 +21,14 @@ export default function Header() {
                 Home
             </Link>
 
-            <Link to='customers'>
+            <Link to='/customers'>
                 <FiUser color="#FFF" size={24} />
                 Clientes
             </Link>
 
-            <Link to='settings'>
+            <Link to='/profile'>
                 <FiSettings color="#FFF" size={24} />
-                Configurações
+                Perfil
             </Link>
         </div>
     )
