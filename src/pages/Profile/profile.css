@@ -9,7 +9,7 @@
 
 .label-avatar {
     width: 200px;
-    height: 200px;
+    height: 280px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -25,7 +25,7 @@
     z-index: 99;
     position: absolute;
     opacity: 0.7;
-    transition: all 0.7s;
+    transition: all 0.4s;
 }
 
 .label-avatar span:hover{
@@ -60,7 +60,7 @@
     max-width: 600px;
 }
 
-.logout {
+.logout-btn {
     padding: 8px 20px;
     border: 1px solid #121212;
     background-color: transparent;

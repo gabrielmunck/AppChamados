@@ -10,8 +10,8 @@ export const AuthContext = createContext({})
 
 function AuthProvider({ children }) {
     const [user, setUser] = useState(null)
-    const [loading, setLoading] = useState(true)
     const [loadingAuth, setLoadingAuth] = useState(false) // spinner quando estiver carregando
+    const [loading, setLoading] = useState(true)
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -133,6 +133,8 @@ function AuthProvider({ children }) {
                 logout,
                 loadingAuth,
                 loading,
+                storageUser,
+                setUser,
 
             }}>
             {children}
