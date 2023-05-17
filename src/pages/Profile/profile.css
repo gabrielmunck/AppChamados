@@ -34,6 +34,7 @@
 }
 
 .form-profile img {
+    margin-left: 3em;
     margin-bottom: 1em;
     border-radius: 50%;
     object-fit: cover;
