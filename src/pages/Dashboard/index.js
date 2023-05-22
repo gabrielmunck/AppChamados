@@ -50,7 +50,11 @@ export default function Dashboard() {
                             <tr>
                                 <td data-label='Cliente'> Mercado Esquina </td>
                                 <td data-label='Assunto'> Suporte </td>
-                                <td data-label='Status'> Em Aberto </td>
+                                <td data-label='Status'> 
+                                    <span className="badge" style={ {backgroundColor: '#999'} }>
+                                        Em aberto
+                                    </span>
+                                 </td>
                                 <td data-label='Cadastrado'> 12/05/2022 </td>
                                 <td data-label='#'>
                                     <button className="action" style={ {backgroundColor: '#3583f6'} }> <FiSearch color="#FFF" size={17}/> </button>
