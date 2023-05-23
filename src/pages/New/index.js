@@ -1,4 +1,8 @@
-import { useState } from "react"
+import { useState, useEffect, useContext } from "react"
+
+import { AuthContext } from "../../contexts/auth"
+import { db } from "../../services/firebaseConnection"
+import { collection, getDocs, getDoc, doc } from "firebase/firestore"
 
 import Header from "../../components/Header"
 import Title from "../../components/Title"
@@ -7,16 +11,67 @@ import './new.css'
 import { FiPlusCircle } from "react-icons/fi"
 
 
+const listRef = collection(db, 'customers')
+
 export default function New() {
 
+    const { user } = useContext(AuthContext)
+
     const [customers, setCustomers] = useState([])
+    const [loadCustomer, setLoadCustomer] = useState(true)
+    const [customerSelected, setCustomerSelected] = useState(0)
 
     const [complemento, setComplemento] = useState('')
     const [assunto, setAssunto] = useState('Suporte')
     const [status, setStatus] = useState('Aberto')
 
+    useEffect(() => {
+
+        async function loadCustomers() {
+            const querySnapshot = await getDocs(listRef )
+                .then( (snapshot) => {
+
+                    let lista = []
+
+                    snapshot.forEach((doc) => {
+                        lista.push({
+                            id:doc.id,
+                            nomeFantasia:doc.data().nomeFantasia
+                        })
+                    }) 
+                    
+                    if(snapshot.docs.size === 0) {
+                        console.log('Nenhuma empresa encontrada')
+                        setCustomers([  {id: 1, nomeFantasia: 'Houston, we have a problem'} ])
+                        setLoadCustomer(false)
+                        return
+                    }
+
+                    setCustomers(lista)
+                    setLoadCustomer(false)
+
+                })
+                .catch ((error) => {
+                    console.log('ERRO AO BUSCAR OS CLIENTES', error)
+                    setLoadCustomer(false)
+                    setCustomers([  {id: 1, nomeFantasia: 'Houston, we have a problem'} ])
+                })
+        }
+
+        loadCustomers()
+
+    }, [])
+
+    function handleChangeSelect(e) {
+        setAssunto(e.target.value)
+    }
+
     function handleOptionChange(e) {
         setStatus(e.target.value);
+    }
+
+    function handleChangeCustomer(e) {
+        setCustomerSelected(e.target.value)
     }
 
     return (
@@ -36,13 +91,27 @@ export default function New() {
                     <form className="form-profile">
 
                         <label>Clientes</label>
-                        <select>
-                            <option key={1} value={1}>Mercado Teste</option>
-                            <option key={2} value={2}>TEch tek</option>
-                        </select>
+                        {
+                            loadCustomer ? (
+                                <input type="text" disabled={ true } value='Carregando...'/>
+                            ) : (
+                                <select value={customerSelected} onChange={handleChangeCustomer}> 
+                                    {customers.map((item, index) =>{
+                                        return(
+                                            <option key={index} value={index}>
+                                                {item.nomeFantasia}
+                                            </option>
+                                        )
+
+                                    })}
+                                </select>
+                            )
+                        }
+                            
+                        
 
                         <label>Assunto</label>
-                        <select>
+                        <select value={assunto} onChange={handleChangeSelect}>
                             <option key={1} value='Suporte'>Suporte</option>
                             <option key={2} value='Visita Tecnica'>Visita Tecnica</option>
                             <option key={3} value='Financeiro'>Financeiro</option>
