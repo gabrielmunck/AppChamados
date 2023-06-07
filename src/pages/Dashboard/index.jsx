@@ -2,7 +2,7 @@ import { AuthContext } from "../../contexts/auth"
 import { useContext, useEffect, useState } from "react"
 
 import { Link } from "react-router-dom";
-import { format } from 'date-fns'
+import { format, set } from 'date-fns'
 
 import Header from "../../components/Header";
 import Title from '../../components/Title'
@@ -15,16 +15,16 @@ import { FiPlus, FiMessageSquare, FiSearch, FiEdit2 } from "react-icons/fi";
 import './dashboard.css'
 
 
+
 const listRef = collection(db, "chamados")
 
 export default function Dashboard() {
 
-    const { logout } = useContext(AuthContext)
-
-
     const [chamados, setChamados] = useState([])
     const [loading, setLoading] = useState(true)
-    const [isEmpty, setIsEmpty] = useState (false)
+    const [lastDocs,setLastDocs] = useState()
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [isEmpty, setIsEmpty] = useState(false)
 
 
     useEffect(() => {
@@ -45,7 +45,7 @@ export default function Dashboard() {
 
         loadChamados()
 
-        return () => {}
+        return () => { }
 
     }, [])
 
@@ -70,11 +70,14 @@ export default function Dashboard() {
                     createdFormat: format(doc.data().created.toDate(), 'dd/MM/yyyy'),
                     status: doc.data().status,
                     complemento: doc.data().complemento,
-                    
+
                 }) // Colocando objeto partes do objeto doc em uma lista
             })
 
+            const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1] // Pegando o ultimo item dentro da query
+            
             setChamados(chamados => [...chamados, ...lista]) // "...chamados" mantem os chamados ja existentes "...lista" pega a mais todos da lista do forEach
+            setLastDocs(lastDoc)
 
         } else /* caso esteja vazia */ {
 
@@ -82,16 +85,29 @@ export default function Dashboard() {
 
         }
 
+        setLoadingMore(false)
+
     }
 
 
-    if(loading) {
+    async function handleMore(){ //funcao feita para criar uma query de busca, porem começando a partir do "lastDocs"
 
-        return(
+        setLoadingMore(true)
+
+        const q = query(listRef, orderBy('created', 'desc'), startAfter(lastDocs), limit(5))
+        const querySnapshot = await getDocs(q)
+        await updateState(querySnapshot)
+
+    }
+
+
+    if (loading) {
+
+        return (
 
             <div>
 
-                <Header/>
+                <Header />
 
                 <div className="content">
 
@@ -153,14 +169,14 @@ export default function Dashboard() {
 
                                         {chamados.map((item, index) => {
 
-                                            return(
+                                            return (
 
                                                 <tr key={index}>
 
                                                     <td data-label='Cliente'>{item.cliente}</td>
                                                     <td data-label='Assunto'>{item.assunto}</td>
                                                     <td data-label='Status'>
-                                                        <span className="badge" style={{ backgroundColor: '#999' }}>
+                                                        <span className="badge" style={{ backgroundColor: item.status === 'Aberto' ? '#5cb85c' : '#999' }}>
                                                             {item.status}
                                                         </span>
                                                     </td>
@@ -168,7 +184,7 @@ export default function Dashboard() {
                                                     <td data-label='#'>
                                                         <button className="action" style={{ backgroundColor: '#3583f6' }}> <FiSearch color="#FFF" size={17} /> </button>
                                                         <button className="action" style={{ backgroundColor: '#f6a935' }}> <FiEdit2 color="#FFF" size={17} /> </button>
-            
+
                                                     </td>
 
                                                 </tr>
@@ -180,6 +196,9 @@ export default function Dashboard() {
                                     </tbody>
 
                                 </table>
+                                        
+                                {loadingMore && <h3>Buscando mais chamados...</h3>} 
+                                { !loadingMore && !isEmpty && <button className="btn-more" onClick={handleMore}>Buscar mais</button>}
 
                             </>
 
