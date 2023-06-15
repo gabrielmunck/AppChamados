@@ -183,7 +183,7 @@ export default function Dashboard() {
                                                     <td data-label='Cadastrado'> {item.createdFormat} </td>
                                                     <td data-label='#'>
                                                         <button className="action" style={{ backgroundColor: '#3583f6' }}> <FiSearch color="#FFF" size={17} /> </button>
-                                                        <button className="action" style={{ backgroundColor: '#f6a935' }}> <FiEdit2 color="#FFF" size={17} /> </button>
+                                                        <Link to={`/new/${item.id}`} className="action" style={{ backgroundColor: '#f6a935' }}> <FiEdit2 color="#FFF" size={17} /> </Link>
 
                                                     </td>
 
